@@ -103,7 +103,7 @@ python virtnbd-parser.py
 
 Example dry-run:
 ```bash
-python virtnbd-parser.py --dry-run --log-dir ./tests/files/
+python virtnbd_parser.py --dry-run --log-dir ./tests/files/
 ```
 
 ## Development
@@ -118,7 +118,7 @@ pytest tests/test_parser.py
 
 ## Project Structure
 
-- `virtnbd-parser.py`: The main script logic.
+- `virtnbd_parser.py`: The main script logic.
 - `pyproject.toml`: Project metadata and dependencies.
 - `uv.lock`: Locked dependency versions.
 - `tests/files/`: Sample log files for testing.
