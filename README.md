@@ -6,12 +6,13 @@ A Python script to parse logs from `virtnbdbackup` and send the metrics to an In
 
 - Parses `virtnbdbackup` log files (full and incremental).
 - Extracts metrics such as:
-    - Backup duration and status.
-    - Backup week number (ISO).
-    - Total data saved (GiB).
-    - VM name and version.
-    - Checkpoint information.
-    - Error and warning counts.
+  - Backup duration and status.
+  - Backup week number (ISO) and year.
+  - Total data saved (GiB).
+  - VM name and version.
+  - Checkpoint information.
+  - Error and warning counts.
+- Duplicate detection: Tracks processed log files to avoid duplicate entries in InfluxDB.
 - Sends data to InfluxDB v2 for monitoring and alerting.
 - Supports dry-run mode for local verification.
 
@@ -96,6 +97,8 @@ python virtnbd-parser.py
 
 - `--dry-run`: Parse the logs and print the InfluxDB line protocol to the console without sending it to the server.
 - `--log-dir <path>`: Specify a custom directory to look for log files.
+- `--all-logs`: Process all log files in the log directory, not just the latest.
+- `--force`: Process log files even if they have already been entered into InfluxDB.
 
 Example dry-run:
 

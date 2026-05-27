@@ -217,6 +217,7 @@ def build_line_protocol(host, vm, log_file, exit_code, parsed):
   timestamp = parsed["end_time"] or datetime.now(timezone.utc)
   timestamp_ns = int(timestamp.timestamp() * 1_000_000_000)
   week_number = timestamp.isocalendar().week
+  year = timestamp.year
 
   tags = {
     "host": host,
@@ -235,6 +236,7 @@ def build_line_protocol(host, vm, log_file, exit_code, parsed):
     "attached_disks": f'{parsed["attached_disks"]}i',
     "concurrent_processes": f'{parsed["concurrent_processes"]}i',
     "week_number": f"{week_number}i",
+    "year": f"{year}i",
     "version": parsed["version"],
     "output_path": parsed["output_path"],
     "log_file": log_file.name,
@@ -284,6 +286,25 @@ def write_to_influx(line):
 
 
 # -----------------------------
+# STATE MANAGEMENT
+# -----------------------------
+
+PROCESSED_LOGS_FILE = Path(__file__).parent / ".processed_logs"
+
+
+def load_processed_logs():
+  if not PROCESSED_LOGS_FILE.exists():
+    return set()
+  with open(PROCESSED_LOGS_FILE, "r") as f:
+    return set(line.strip() for line in f if line.strip())
+
+
+def mark_log_as_processed(log_name):
+  with open(PROCESSED_LOGS_FILE, "a") as f:
+    f.write(f"{log_name}\n")
+
+
+# -----------------------------
 # MAIN
 # -----------------------------
 
@@ -301,12 +322,23 @@ def main():
     action="store_true",
     help="Process all log files in log-dir, not just the latest.",
   )
+  parser.add_argument(
+    "--force",
+    action="store_true",
+    help="Process log files even if they have already been entered.",
+  )
 
   args = parser.parse_args()
 
   log_files = get_all_logs(args.log_dir) if args.all_logs else [get_latest_log(args.log_dir)]
+  processed_logs = load_processed_logs()
 
   for log_file in log_files:
+    if log_file.name in processed_logs and not args.force:
+      if args.dry_run:
+        print(f"Skipping already processed log: {log_file.name} (use --force to override)")
+      continue
+
     parsed = parse_log(log_file)
 
     # Prefer filename for backup type
@@ -326,6 +358,7 @@ def main():
       print(line)
     else:
       write_to_influx(line)
+      mark_log_as_processed(log_file.name)
       print(f"Wrote backup status to InfluxDB for VM: {vm}, log: {log_file.name}")
 
 
