@@ -13,6 +13,7 @@ A Python script to parse logs from `virtnbdbackup` and send the metrics to an In
   - Checkpoint information.
   - Error and warning counts.
 - Duplicate detection: Tracks processed log files to avoid duplicate entries in InfluxDB.
+- Test suite: Includes unit and functional tests to ensure reliability.
 - Sends data to InfluxDB v2 for monitoring and alerting.
 - Supports dry-run mode for local verification.
 
@@ -101,9 +102,18 @@ python virtnbd-parser.py
 - `--force`: Process log files even if they have already been entered into InfluxDB.
 
 Example dry-run:
-
 ```bash
 python virtnbd-parser.py --dry-run --log-dir ./tests/files/
+```
+
+## Development
+
+### Running Tests
+To run the test suite:
+```bash
+# Using pytest directly (ensure dependencies are installed)
+export PYTHONPATH="."
+pytest tests/test_parser.py
 ```
 
 ## Project Structure

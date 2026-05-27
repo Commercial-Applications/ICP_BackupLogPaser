@@ -6,3 +6,9 @@ dependencies = [
     "requests",
     "python-dotenv",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-mock",
+]
