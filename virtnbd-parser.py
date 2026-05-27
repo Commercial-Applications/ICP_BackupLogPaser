@@ -1,3 +1,5 @@
+#!/opt/virndbbackup-logparser/venv/bin/python
+
 import argparse
 import os
 import re
