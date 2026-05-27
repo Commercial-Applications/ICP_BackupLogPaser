@@ -6,6 +6,7 @@ import re
 import socket
 from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import requests
 from dotenv import load_dotenv
@@ -27,6 +28,8 @@ INFLUX_TOKEN = os.getenv("INFLUX_TOKEN")
 MEASUREMENT = "backup_run"
 PROGRAM = "virtnbdbackup"
 
+LOG_TZ = ZoneInfo("Australia/Brisbane")
+
 
 # -----------------------------
 # HELPERS
@@ -45,10 +48,12 @@ def parse_timestamp(line):
   if not match:
     return None
 
-  return datetime.strptime(
+  local = datetime.strptime(
     match.group(1),
     "%Y-%m-%d %H:%M:%S"
-  ).replace(tzinfo=timezone.utc)
+  ).replace(tzinfo=LOG_TZ)
+
+  return local.astimezone(timezone.utc)
 
 
 def get_all_logs(log_dir):
