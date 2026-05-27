@@ -7,7 +7,7 @@ A Python script to parse logs from `virtnbdbackup` and send the metrics to an In
 - Parses `virtnbdbackup` log files (full and incremental).
 - Extracts metrics such as:
   - Backup duration and status.
-  - Backup week number (ISO) and year.
+  - Backup week number (Sunday-start, matches `date +%U`) and year.
   - Total data saved (GiB).
   - VM name and version.
   - Checkpoint information.

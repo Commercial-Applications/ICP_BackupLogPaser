@@ -216,7 +216,7 @@ def build_line_protocol(host, vm, log_file, exit_code, parsed):
 
   timestamp = parsed["end_time"] or datetime.now(timezone.utc)
   timestamp_ns = int(timestamp.timestamp() * 1_000_000_000)
-  week_number = timestamp.isocalendar().week
+  week_number = int(timestamp.strftime("%U"))
   year = timestamp.year
 
   tags = {
