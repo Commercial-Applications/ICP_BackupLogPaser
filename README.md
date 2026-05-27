@@ -7,6 +7,7 @@ A Python script to parse logs from `virtnbdbackup` and send the metrics to an In
 - Parses `virtnbdbackup` log files (full and incremental).
 - Extracts metrics such as:
     - Backup duration and status.
+    - Backup week number (ISO).
     - Total data saved (GiB).
     - VM name and version.
     - Checkpoint information.
@@ -20,14 +21,58 @@ A Python script to parse logs from `virtnbdbackup` and send the metrics to an In
 - [uv](https://github.com/astral-sh/uv) (recommended) or `pip`.
 
 ## Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/SeanSmith/virtnbdbackup-logparser.git
-   cd virtnbdbackup-logparser
+1. For typical usage through crontab -e
+    ```bash
+   # To be able to configure virtual environments some systems may need..
+   sudo apt update && sudo apt install -y python3.10-venv
    ```
+    ```bash
+   # Create a directory in /opt/virtnbdbackup-logparser 
+   # In this directory create the venv
+   sudo python3 -m venv venv
+   ```
+   ```bash
+   # Upgrade PIP in vEnv and install dependencies 
+   # In this directory create the venv
+   sudo ./venv/bin/pip install --upgrade pip
+   sudo ./venv/bin/pip install python-dotenv request
+    ```
+   Clone the repository:
+   ```bash
+   git clone https://github.com/Commercial-Applications/ICP_BackupLogPaser.git .
+   ````
+   
+   Configure environment variables:
+   Create a `.env` file in the root directory (copy from `.env.example` if available):
+   ```env
+   INFLUX_URL=http://your-influxdb-url:8086
+   INFLUX_TOKEN=your-influxdb-token
+   INFLUX_ORG=your-org
+   INFLUX_BUCKET=your-bucket
+   LOG_DIR=/var/log/virtnbdbackup
+   ```
+   Lock this directory down to admin as it contains .env secrets
+   ```
+   # Make the wrapper executable
+   chmod +x /usr/local/sbin/my-utility
+   
+   # Restrict the project directory to root access only
+   chmod -R 700 /opt/my-admin-tool
+   chown -R root:root /opt/my-admin-tool
+   ```
+    Create a small wrapper script in /usr/local/sbin that calls this package
+    ```aiignore
+    #!/bin/bash
+    # Move to the directory so Python naturally finds your .env file
+    cd /opt/my-admin-tool
+    
+    # Run the script using the virtual environment's isolated python interpreter
+    exec ./venv/bin/python main.py "$@"
+    ```
 
-2. Install dependencies:
+### For Testing or other installations
+
+1. Install dependencies:
    Using `uv`:
    ```bash
    uv sync
@@ -37,16 +82,6 @@ A Python script to parse logs from `virtnbdbackup` and send the metrics to an In
    pip install -r requirements.txt  # If requirements.txt is generated
    # or
    pip install requests python-dotenv
-   ```
-
-3. Configure environment variables:
-   Create a `.env` file in the root directory (copy from `.env.example` if available):
-   ```env
-   INFLUX_URL=http://your-influxdb-url:8086
-   INFLUX_TOKEN=your-influxdb-token
-   INFLUX_ORG=your-org
-   INFLUX_BUCKET=your-bucket
-   LOG_DIR=/var/log/virtnbdbackup
    ```
 
 ## Usage

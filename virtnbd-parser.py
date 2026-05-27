@@ -214,6 +214,7 @@ def build_line_protocol(host, vm, log_file, exit_code, parsed):
 
   timestamp = parsed["end_time"] or datetime.now(timezone.utc)
   timestamp_ns = int(timestamp.timestamp() * 1_000_000_000)
+  week_number = timestamp.isocalendar().week
 
   tags = {
     "host": host,
@@ -231,6 +232,7 @@ def build_line_protocol(host, vm, log_file, exit_code, parsed):
     "duration_sec": f'{parsed["duration_sec"]}i',
     "attached_disks": f'{parsed["attached_disks"]}i',
     "concurrent_processes": f'{parsed["concurrent_processes"]}i',
+    "week_number": f"{week_number}i",
     "version": parsed["version"],
     "output_path": parsed["output_path"],
     "log_file": log_file.name,
