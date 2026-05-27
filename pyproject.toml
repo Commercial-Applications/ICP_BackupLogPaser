@@ -5,6 +5,7 @@ requires-python = ">=3.12"
 dependencies = [
     "requests",
     "python-dotenv",
+    "pytest>=9.0.3",
 ]
 
 [dependency-groups]
