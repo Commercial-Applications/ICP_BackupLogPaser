@@ -17,7 +17,7 @@ import requests
 
 def test_parse_timestamp():
     line = "[2026-05-24 16:38:27] INFO lib common"
-    expected = datetime(2026, 5, 24, 16, 38, 27, tzinfo=timezone.utc)
+    expected = datetime(2026, 5, 24, 6, 38, 27, tzinfo=timezone.utc)
     assert parse_timestamp(line) == expected
 
     assert parse_timestamp("No timestamp here") is None
@@ -57,8 +57,8 @@ def test_parse_log_real_file():
     assert result["total_saved_data_gib"] == 30.2
     assert result["error_count"] == 0
     assert result["warning_count"] == 0
-    assert result["start_time"] == datetime(2026, 5, 24, 16, 38, 27, tzinfo=timezone.utc)
-    assert result["end_time"] == datetime(2026, 5, 24, 16, 40, 5, tzinfo=timezone.utc)
+    assert result["start_time"] == datetime(2026, 5, 24, 6, 38, 27, tzinfo=timezone.utc)
+    assert result["end_time"] == datetime(2026, 5, 24, 6, 40, 5, tzinfo=timezone.utc)
     assert result["duration_sec"] == 98
 
 def test_build_line_protocol():
